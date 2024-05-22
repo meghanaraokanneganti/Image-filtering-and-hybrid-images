@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>Computer Vision Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+	text-transform: lowercase;
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1><span style="color: #DE3737">Project Group 10</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2><b>Project 1: Image Filtering and Hybrid Images</b></h2>
+
+<div style="align: center; padding: 20px">
+<center><img src="cat_dog.bmp" width="70%"  align="middle" /><center>
+<p style="font-size: 14px">Is that a cat or a dog?</p>
+</div>
+
+<p> 	The aim of this project is to generate hybrid images by combining two images. The high frequency image tends to dominate the perception when looked from a closer distance and the low frequency(smooth) image domiates the view when moving farther from the image. By blending the high frequency of one image with low frequency of another image, a hybrid image is generated which gives a perception that varies with distance.</p>
+
+<p> 	The working of this project can be summarized in the following steps</p>
+<ol>
+<li>Reading the images for processing</li>
+<li>Setting the cutoff_frequency for the filter which is appropriate for the images</li>
+<li>Removing high pass frequencies from first image and low pass frequencies from second image using the my_imfilter() function</li>
+<li>Combining the output of both the filtered images to generate hybrid image</li>
+<li>Generating the hybrid images of different scales</li>
+</ol>
+
+<p> 	To genarate the hybrid image, the default behavior of MATLAB's inbuilt function imfilter has been imitated in this project in the my_imfilter function. The implementation of my_imfilter can be summarized as follows:</p>
+
+
+<ol>
+<li>Padding the image with zeros with a margin of half of the filter.</li>
+<li>Convoluting the image and the filter layer by layer.</li>
+</ol>
+
+
+<div style="clear:both">
+
+
+<h2><b>my_imfilter() function</b></h2>
+<pre><code>	
+%Implementation of the my_imfilter function
+function output = my_imfilter(image, filter)
+
+%Calculating the image and filter sizes
+[img_row, img_col] = size(image(:,:,1));
+[filter_row, filter_col] = size(filter);
+
+output  = [];
+
+%Calclate the row and column margin, to pad the input image
+pad_row = (filter_row - 1) / 2;
+pad_col = (filter_col - 1) / 2;
+
+%padding the input image with zeros
+for i = 1:size(image,3)    
+        padded_img(:,:,i) = padarray(image(:, :, i), [pad_row pad_col]);
+end
+
+%processing the output image by convoluting the filter and image
+
+for k = 1:size(image,3)
+    for i = 1:size(padded_img,1)-filter_row+1
+        for j = 1:size(padded_img,2)-filter_col+1
+         %Calculate the output by convoluting the image and the filter
+         output(i,j,k) = sum(sum(filter.*padded_img(i:i+filter_row-1,j:j+filter_col-1,k)));
+        end
+    end 
+end
+end
+</code></pre>
+
+<p></p>
+<h2><b>Hybrid images</b></h2>
+<p>		As stated earlier, the high frequency image dominates the perception when looking from a closer distance and only the low frequency image tends to appear from a farther distance.
+Here is the list of images which have been tested with this project along with the cutoff frequencies used. In all of the test inputs, the first two images are the original images used for processing, the next pair of images are the processed low and high frequency images followed by the hybrid image in different scales which illustrates different perceptions</p>
+<p></p>
+<h4><b>Dog (low frequency) Cat (high frequency); cutoff_frequency = 7</h4>
+<table border=1>
+<tr>
+<td>
+<img src="dog.bmp" width="24.71%"/>
+<img src="cat.bmp" width="24.71%"/>
+<img src="dog_filtered.bmp" width="24.71%"/>
+<img src="cat_filtered.bmp" width="24.71%"/>
+</p>
+<img src="cat_dog.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+<p></p>
+<h4><b>Einstein (low frequency) Marilyn (high frequency); cutoff_frequency = 5</h4>
+<table border=1>
+<tr>
+<td>
+<img src="einstein.bmp" width="24.71%"/>
+<img src="marilyn.bmp" width="24.71%"/>
+<img src="einstein_filtered.bmp" width="24.71%"/>
+<img src="marilyn_filtered.bmp" width="24.71%"/>
+</p>
+<img src="mayilyn_einstein.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+
+<p></p>
+<h4><b>Motorcycle (low frequency) Bicycle (high frequency); cutoff_frequency = 3</h4>
+<table border=1>
+<tr>
+<td>
+<img src="motorcycle.bmp" width="24.71%"/>
+<img src="bicycle.bmp" width="24.71%"/>
+<img src="motorbike_filtered.bmp" width="24.71%"/>
+<img src="bicycle_filtered.bmp" width="24.71%"/>
+</p>
+<img src="bicycle_motorbike.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+
+<p></p>
+<h4><b>Bird (low frequency) Plane (high frequency); cutoff_frequency = 5</h4>
+<table border=1>
+<tr>
+<td>
+<img src="bird.bmp" width="24.71%"/>
+<img src="plane.bmp" width="24.71%"/>
+<img src="bird_filtered.bmp" width="24.71%"/>
+<img src="plane_filtered.bmp" width="24.71%"/>
+</p>
+<img src="bird_plane.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+<p></p>
+<h4><b>Fish (low frequency) Submarine (high frequency); cutoff_frequency = 6</h4>
+<table border=1>
+<tr>
+<td>
+<img src="fish.bmp" width="24.71%"/>
+<img src="submarine.bmp" width="24.71%"/>
+<img src="fish_filtered.bmp" width="24.71%"/>
+<img src="submarine_filtered.bmp" width="24.71%"/>
+</p>
+<img src="fish_submarine.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+<p></p>
+<h4><b>Submarine (low frequency) Fish (high frequency); cutoff_frequency = 6</b></h4>
+<table border=1>
+<tr>
+<td>
+<img src="submarine.bmp" width="24.71%"/>
+<img src="fish.bmp" width="24.71%"/>
+<img src="submarine_low.bmp" width="24.71%"/>
+<img src="fish_high.bmp" width="24.71%"/>
+</p>
+<img src="submarine_fish.bmp" width="75%"/>
+</td>
+</tr>
+</table>
+
+</body>
+</html>
